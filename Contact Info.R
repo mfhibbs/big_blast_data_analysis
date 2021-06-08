@@ -37,3 +37,25 @@ sc_wc_joined$Percent_w_Contact <- (sc_wc_joined$Freq_w_Contact/sc_wc_joined$Tota
 
 cont_list <- as.data.frame(gems_with_contact[ ,c("metagenome_id", "Contact.Email", "Contact.Name", "Study.Name")])
 cont_list <- cont_list[!duplicated(cont_list$metagenome_id), ]
+
+message <- c("Dear Dr. X,
++ I hope this email finds you well. I am reaching out to seek permission to use data for which you are listed as PI in JGI's database. The data will be used by the Steen Lab, a research group at the University of Tenessee Knoxville in the Department of Microbiology. The data will be used in DIAMOND searches for the bioinformatics portion of the project. 
++ According to our records, you contributed the following data sets:
++ Y:Z
++ Sincerely,
++ The Steen Lab")
+message <- rep(message, length(name))
+name <- cont_list$Contact.Name
+id <- cont_list$metagenome_id
+text_id <- cont_list$Study.Name
+
+trial <- list()
+for(i in 1:length(name))
+  {
+    x <- gsub("X", c(name[i]), message[i])
+    y <- gsub("Y", c(id[i]), x)
+    z <- gsub("Z", c(text_id[i]), y)
+    trial[i] <- z
+   }
+
+cl <- split(cont_list, cont_list$Contact.Name)
