@@ -5,7 +5,7 @@ library(dplyr)
 #https://portal.nersc.gov/GEM/genomes/genome_metadata.tsv more comments on this file etc.
 gem_df <- read.csv("gem_data.csv", na = c("", "NA", "NULL"))
 #IMG datafile (insert url)
-img_df <- read.csv("img_metadata.csv")
+img_df <- read.csv("imgdata.csv")
 img_df <- img_df %>% rename(c("metagenome_id" = "IMG.Genome.ID"))
 # integrate metadata into each genome
 gems_joined <- gem_df %>%
