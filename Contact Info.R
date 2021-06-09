@@ -38,24 +38,49 @@ sc_wc_joined$Percent_w_Contact <- (sc_wc_joined$Freq_w_Contact/sc_wc_joined$Tota
 cont_list <- as.data.frame(gems_with_contact[ ,c("metagenome_id", "Contact.Email", "Contact.Name", "Study.Name")])
 cont_list <- cont_list[!duplicated(cont_list$metagenome_id), ]
 
+cl <- split(cont_list, as.factor(cont_list$Contact.Name))
+lev <- levels(as.factor(cont_list$Contact_Name))
 message <- c("Dear Dr. X,
-+ I hope this email finds you well. I am reaching out to seek permission to use data for which you are listed as PI in JGI's database. The data will be used by the Steen Lab, a research group at the University of Tenessee Knoxville in the Department of Microbiology. The data will be used in DIAMOND searches for the bioinformatics portion of the project. 
-+ According to our records, you contributed the following data sets:
-+ Y:Z
-+ Sincerely,
-+ The Steen Lab")
-message <- rep(message, length(name))
-name <- cont_list$Contact.Name
-id <- cont_list$metagenome_id
-text_id <- cont_list$Study.Name
+I hope this email finds you well. I am reaching out to seek permission to use data for which you are listed as PI in JGI's database. The data will be used by the Steen Lab, a research group at the University of Tenessee Knoxville in the Department of Microbiology. It will be used in DIAMOND searches for the bioinformatics portion of the project. 
+According to our records, you contributed the following data sets:")
+message <- rep(message, length(cl))
 
-trial <- list()
-for(i in 1:length(name))
-  {
-    x <- gsub("X", c(name[i]), message[i])
-    y <- gsub("Y", c(id[i]), x)
-    z <- gsub("Z", c(text_id[i]), y)
-    trial[i] <- z
-   }
+y <- lapply(cl, function(x) x[ , "metagenome_id"])
+z <- lapply(cl, function(x) x[ , "Study.Name"])
 
-cl <- split(cont_list, cont_list$Contact.Name)
+try <- list()
+for(i in 1:length(lev)) 
+   { 
+       a <- gsub("X", lev[i], message[i])
+      for(j in 1:nrow(as.data.frame(cont_list_list[i])))
+       {
+          s <- y[[i]][[j]]
+          t <- z[[i]][[j]]
+          st <- paste(s, ":", t)
+          a <- paste(a, st, sep = "\n")
+        }
+    try[i] <- a
+}
+
+
+closing = paste("Sincerely," , "The Steen Lab", sep = "\n")
+try2 <- list()
+for(i in 1:length(try))
+{
+  t <- paste(try[i], closing, sep = "\n")
+  try2[i] <- t
+}
+
+df <- as.data.frame(try2)
+dft <- t(df)
+nnames <- seq(1:266)
+#next, merge cont_list with email based on name? 
+row.names(dft) <- nnames
+
+cont_list3 <- cont_list[order(cont_list$Contact.Name),] 
+names2 <- seq(1:7254)
+row.names(cont_list3) <- c(names2)
+head(which(grepl("A", cont_list$Contact.Name)))
+cont_list3 <- cont_list3[-c(1:2069), ]
+contact_joined <- merge(x = cont_list3, y = cont_list2, by = "Contact.Name", all.x = TRUE)
+ce <- contact_joined[duplicated(contact_joined$Email_Text), 5]<- NA
