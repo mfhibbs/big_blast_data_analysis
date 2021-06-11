@@ -1,0 +1,20 @@
+---
+title: "Big Blast Project Notebook"
+output: html_notebook
+---
+
+```{bash}
+sqlite3 big_blast_database.db
+.mode csv
+.import /home/mhibbs1/big_blast_data_analysis/gem_img_joined.csv gem_img_joined
+.import /home/mhibbs1/big_blast_data_analysis/img_new_data.csv img_metadata
+.import /home/mhibbs1/big_blast_data_analysis/gem_data.csv gem_data
+```
+
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
