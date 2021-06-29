@@ -3,8 +3,8 @@
 #####
 
 #Read in .diamond files 
-setwd("/srv/data/big_blast/data/trial_diamond_results")
- file_list <- list.files(path = "/srv/data/big_blast/data/trial_diamond_results")
+setwd("/srv/data/big_blast/data/diamond_results")
+ file_list <- list.files(path = "/srv/data/big_blast/data/diamond_results")
  dataset <- list()
  for (i in 1:length(file_list)){
     temp_data <- data.table::fread(file_list[i], header = F)
@@ -12,23 +12,30 @@ setwd("/srv/data/big_blast/data/trial_diamond_results")
  }
 
  #name columns in each df in list
- headers <- c("Query Id", "Query Length", "Subject Length", "Perc. of Id. Matches", "Eval", "Bit Score", "Raw Score")
+ headers <- c("Query Id", "Query Length", 
+              "Subject Id", "Subject Length", 
+              "Percent Of Identical_matches","Alignment Length",
+              "Number of mismatches", "Number of Gap Openings",
+              "Total Number of gaps",  "Percentage of Positive-Scoring Matches", 
+              "Start of Alignment in query", "End of Alignment in query",
+              "start of Alignment in subject", "End of Alignment in subject",
+               "Eval", "Bit Score")
  bit_score <- lapply(dataset, setNames, headers)
- bit_score2 <- lapply(bit_score, function(x) x[ , c(1,6)])
+ #bit_score <- lapply(bit_score, function(x) x[ , c(1,6)])
  
  #rbind all tables in list to create one dataframe
  library(data.table)
- bit_score_df <- rbindlist(bit_score2)
+ bit_score_df <- rbindlist(bit_score)
 
  #method 1: sample a few lines from each mag 
- bit_score_samp <- lapply(bit_scores2, function(x) x[sample(nrow(x), 3), ])
+ bit_score_samp <- lapply(bit_score, function(x) x[sample(nrow(x), 3), ])
  b_s_samp_df <- rbindlist(bit_scores_samp)
  
  #method 2: sample a total of 10,000 mags from entire dataframe
  bit_score_samp <-  bit_score_df[sample(nrow(bit_score_df), 10000), ]
  
  #For both methods, plot the density distribution 
- dens <- density(bit_score_df$'Bit Score')
+ dens <- density(b_s_samp_df$'Bit Score')
  plot(dens, frame = FALSE, col = "steelblue", 
        main = "Density plot of bit scores", xlim = c(0, 1000)) 
  
